@@ -1,5 +1,4 @@
 # -Personalized-News-Chatbot-via-Email
-# Personalized Topic-Based News Chatbot
 
 ## Overview
 
