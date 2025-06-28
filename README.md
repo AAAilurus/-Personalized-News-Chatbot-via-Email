@@ -3,7 +3,7 @@
 
 ## Overview
 
-This project is about creating a **chatbot that automatically fetches daily updates on a user-defined topic and sends them via email**. It acts like a personal newspaper that delivers meaningful, summarized news without requiring the user to search across different platforms.
+The idea is to create a personalized news chatbot that automatically delivers topic-specific updates to users via email at regular intervals. Instead of manually searching for information across platforms like Google, Reddit, or ChatGPT, users simply choose a topic they care about—such as AI, robotics, finance, or any niche interest—and the system handles the rest. It fetches the latest content from trusted online sources using APIs or web scraping, summarizes it using tools like ChatGPT, and sends a clean, concise email digest daily or weekly. This eliminates the need for active searching and keeps users consistently informed in a passive, effortless way. The project is designed to save time, reduce information overload, and help users build a daily learning habit. It is especially useful for students, professionals, researchers, and anyone who wants to stay updated without the hassle of checking multiple platforms every day.
 
 ---
 
