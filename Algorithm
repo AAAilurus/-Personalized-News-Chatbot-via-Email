@@ -1,0 +1,9 @@
+[⏰ Scheduler (daily/weekly)]
+        ↓
+[🌐 Fetch News Articles (NewsAPI)]
+        ↓
+[🧑‍🤝‍🧑 Fetch Reddit Posts (Reddit API or praw)]
+        ↓
+[🧠 Summarize with Gemini]
+        ↓
+[📧 Send Email with Digest]
