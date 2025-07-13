@@ -1,9 +1,13 @@
-[⏰ Scheduler (daily/weekly)]
+🌐 User Submits Topic (via Webhook Form or Bot)
         ↓
-[🌐 Fetch News Articles (NewsAPI)]
+📝 Save User + Topic to Google Sheet or Notion
+        ↓ (Every day at 8AM)
+⏰ Daily Scheduler Triggers
         ↓
-[🧑‍🤝‍🧑 Fetch Reddit Posts (Reddit API or praw)]
+📂 Read All User Topics (Google Sheet or Notion)
         ↓
-[🧠 Summarize with Gemini]
-        ↓
-[📧 Send Email with Digest]
+🔁 For Each User:
+    ↳ 🌐 Fetch NewsAPI articles (using their topic)
+    ↳ 🧑‍🤝‍🧑 Fetch Reddit posts (search with topic)
+    ↳ 🧠 Gemini summarizes both
+    ↳ 📧 Send email digest to that user
