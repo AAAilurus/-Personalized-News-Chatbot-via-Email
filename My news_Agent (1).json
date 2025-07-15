@@ -1,0 +1,420 @@
+{
+  "name": "My news_Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/top-headlines?category=technology&apiKey=b6195f5bb1d24428bfce066043642640",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "Topic",
+              "value": "={{$json[\"Topic\"]}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -20,
+        280
+      ],
+      "id": "58824ad8-7b27-446a-94fa-ed384b720d7b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1140,
+        -100
+      ],
+      "id": "c3195caa-754c-45ae-92c6-54dac7acc3a9",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a beginner-friendly lesson for the topic \"{{ $json[\"Topic\"] || 'robotics' }}\". This is lesson number {{ $json[\"Current Lesson\"] || 1 }}.\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        300,
+        120
+      ],
+      "id": "74e2be82-7d4a-40b4-80db-da69bf1cca79",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        240,
+        400
+      ],
+      "id": "ca3673fe-e4dc-4593-872e-d7d1b823b8c6",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tqjrIy7mRF3ocSjD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=Create a short beginner-friendly lesson for the topic \"{{ $json[\"Topic\"] }}\". This is lesson {{ $json[\"Current Lesson\"] || 1 }}."
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        460
+      ],
+      "id": "97813a43-726b-47ad-8f87-bcda8fb9cfcc",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        540,
+        460
+      ],
+      "id": "1a01c140-eeab-474a-9dbf-6bb1156b6f17",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d477b6d9-958d-4196-9fd5-4d4a1b7dca76",
+              "leftValue": "Email",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "4bd2db14-fcef-4a70-a1bf-1fd8d9b39e42",
+              "leftValue": "Prefered Time",
+              "rightValue": "={{ $now.format('HH:mm') }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -760,
+        40
+      ],
+      "id": "68d718ec-c2e8-441a-b635-34df4e0678ea",
+      "name": "Filter's Today's Topic"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -480,
+        -20
+      ],
+      "id": "6d8bc15d-635e-473d-9929-b045dc067066",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        -60
+      ],
+      "id": "862be092-72df-483c-af7b-3a023656c4f4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c61e3fda-f084-4999-8920-3eb3fee531b7",
+              "name": "to",
+              "value": "={{ $('Get row(s) in sheet').item.json['User Email'] }}",
+              "type": "string"
+            },
+            {
+              "id": "61e2faa8-c56b-49c2-9116-e6c362c85e41",
+              "name": "subject",
+              "value": "=Your Daily Lesson & News on{{ $('Get row(s) in sheet').item.json.Topic }} ",
+              "type": "string"
+            },
+            {
+              "id": "0c818bf7-7649-4f80-aafc-7c825990fb4a",
+              "name": "body",
+              "value": "=Hi!\n\nHere’s your daily learning update on **{{ $('Get row(s) in sheet').item.json.Topic }}**:\n\n---\n**Lesson (Part {{ $json[\"Current Lesson\"] || 1 }}):**\n{{ $node[\"AI Agent\"].json[\"output\"] }}\n\nHave a great day!\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        160
+      ],
+      "id": "c4612d98-941a-4322-a12b-4c7e85351f2d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "12ng76wm9qK8BzjYWQ5v6TNpYk6DkDZglORvKQxIdPEk",
+          "mode": "list",
+          "cachedResultName": "personalized-news-subscribers",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12ng76wm9qK8BzjYWQ5v6TNpYk6DkDZglORvKQxIdPEk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 10103522,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12ng76wm9qK8BzjYWQ5v6TNpYk6DkDZglORvKQxIdPEk/edit#gid=10103522"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -960,
+        40
+      ],
+      "id": "b5372ddf-5f69-4e82-a23f-63d2df74756b",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4BbkGtOnghWR8Fam",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        340
+      ],
+      "id": "07da113c-c490-4966-9314-25b99390d073",
+      "name": "Send a message",
+      "webhookId": "fab77aee-25aa-4d88-9a34-598cc997ce9d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ldz1ZrqRUqWpj0n2",
+          "name": "Basanta Gmail"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter's Today's Topic": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter's Today's Topic",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ca991040-2395-4648-82cc-8c32c7928436",
+  "meta": {
+    "templateId": "self-building-ai-agent",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a4751751ac8d8629beb4599f66c544c013d764e70aca160f224959859b48ca93"
+  },
+  "id": "Lk4EaYEuOPN2zSSk",
+  "tags": []
+}
