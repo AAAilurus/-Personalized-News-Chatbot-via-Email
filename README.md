@@ -6,5 +6,5 @@ Users begin by entering one or more topics they’re interested in—such as “
 
 Users are also allowed to introduce new topics at any time. If a user discovers a new area of interest, they can simply add it to the system, set a start date and preferred time, and the system will handle the rest—breaking it into daily lessons, tracking the learning progress, and shifting the active topic queue without affecting existing ones. The system adapts as users grow, pause, or switch interests, ensuring a smooth and self-paced learning experience.
 
-Here is the link to check and see if this work or not : 
+Here is the link to check and see if this works or not : 
 https://docs.google.com/forms/d/e/1FAIpQLSciMPqMAMH6_eZyW-V-aMUfeTZQ0hgGuXrGzm4BoA3Y2BMwxw/viewform?usp=header
