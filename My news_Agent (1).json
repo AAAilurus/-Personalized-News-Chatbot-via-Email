@@ -1,25 +1,15 @@
 {
-  "name": "My news_Agent",
   "nodes": [
     {
       "parameters": {
-        "url": "https://newsapi.org/v2/top-headlines?category=technology&apiKey=b6195f5bb1d24428bfce066043642640",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "Topic",
-              "value": "={{$json[\"Topic\"]}}"
-            }
-          ]
-        },
+        "url": "https://newsapi.org/v2/everything?q={{$json[\"Topic\"]}}&sortBy=publishedAt&language=en&apiKey=...",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -20,
-        280
+        -640,
+        140
       ],
       "id": "58824ad8-7b27-446a-94fa-ed384b720d7b",
       "name": "HTTP Request"
@@ -37,8 +27,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -1140,
-        -100
+        -1300,
+        -160
       ],
       "id": "c3195caa-754c-45ae-92c6-54dac7acc3a9",
       "name": "Schedule Trigger"
@@ -46,28 +36,28 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Create a beginner-friendly lesson for the topic \"{{ $json[\"Topic\"] || 'robotics' }}\". This is lesson number {{ $json[\"Current Lesson\"] || 1 }}.\n",
+        "text": "=You are an expert AI writing assistant creating professional and easy-to-understand daily learning emails.\n\nYou will receive a detailed lesson that includes:\n\n- Three subtopics with summaries, detailed explanations, real-world examples, and simple code snippets.\n- A list of additional resource links.\n\nYour task:\n\nWrite a warm, engaging, and clear email for a learner following a structured 30-day course.\n\nFormat the email as follows:\n\n1. Friendly greeting and brief intro to the day’s topic.\n2. Introduce the 3 subtopics as the day’s learning points in a clear way.\n3. For each subtopic, provide a concise, easy-to-understand explanation and the real-world example. Do not include the code directly but mention there is a simple code snippet that learners can try.\n4. At the end, list the additional resources with brief descriptions, without links in brackets—just plain URLs.\n5. End with a motivational closing encouraging consistent learning and mentioning the next day’s lesson.\n\nKeep the tone professional yet approachable and encouraging.\n\nDo not use any icons, emojis, special symbols, or markdown.\nYou are a professional AI writing assistant creating educational content that reads like a well-written book chapter.\n\nPlease write the lesson in clear, natural language with proper paragraph breaks and spacing. Do not use any symbols such as --, __, **, emojis, or markdown formatting anywhere in the text.\n\nFor each subtopic, provide:\n\n- A detailed explanation in simple, human-friendly language.\n- A real-world example to illustrate the concept.\n- A beginner-friendly code snippet relevant to that subtopic, seamlessly integrated within the explanation, so the learner can understand and follow along as if reading a textbook.\n\nMake sure the entire content flows smoothly, with no abrupt sections or lists. The code should be clearly separated from the text but explained in context.\n\nThe goal is to produce a professional, readable lesson that learners can easily understand and enjoy, similar to reading a high-quality programming book.\nHere is the detailed lesson content you will reformat:\n{{ $json.output }}\n\n",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2,
       "position": [
-        300,
-        120
+        140,
+        60
       ],
       "id": "74e2be82-7d4a-40b4-80db-da69bf1cca79",
       "name": "AI Agent"
     },
     {
       "parameters": {
-        "modelName": "models/gemini-2.5-pro",
+        "modelName": "models/gemini-2.5-flash-lite",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        240,
-        400
+        80,
+        340
       ],
       "id": "ca3673fe-e4dc-4593-872e-d7d1b823b8c6",
       "name": "Google Gemini Chat Model",
@@ -81,13 +71,13 @@
     {
       "parameters": {
         "sessionIdType": "customKey",
-        "sessionKey": "=Create a short beginner-friendly lesson for the topic \"{{ $json[\"Topic\"] }}\". This is lesson {{ $json[\"Current Lesson\"] || 1 }}."
+        "sessionKey": "=={{ \"lesson_\" + $json[\"Topic\"] + \"_\" + ($json[\"Current Lesson\"] || 1) }}\n"
       },
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        400,
-        460
+        240,
+        400
       ],
       "id": "97813a43-726b-47ad-8f87-bcda8fb9cfcc",
       "name": "Simple Memory"
@@ -97,8 +87,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolThink",
       "typeVersion": 1,
       "position": [
-        540,
-        460
+        380,
+        400
       ],
       "id": "1a01c140-eeab-474a-9dbf-6bb1156b6f17",
       "name": "Think"
@@ -141,8 +131,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -760,
-        40
+        -920,
+        -20
       ],
       "id": "68d718ec-c2e8-441a-b635-34df4e0678ea",
       "name": "Filter's Today's Topic"
@@ -154,8 +144,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -480,
-        -20
+        -640,
+        -80
       ],
       "id": "6d8bc15d-635e-473d-9929-b045dc067066",
       "name": "Loop Over Items"
@@ -166,45 +156,10 @@
       "name": "Replace Me",
       "typeVersion": 1,
       "position": [
-        -200,
-        -60
+        -360,
+        -120
       ],
       "id": "862be092-72df-483c-af7b-3a023656c4f4"
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "c61e3fda-f084-4999-8920-3eb3fee531b7",
-              "name": "to",
-              "value": "={{ $('Get row(s) in sheet').item.json['User Email'] }}",
-              "type": "string"
-            },
-            {
-              "id": "61e2faa8-c56b-49c2-9116-e6c362c85e41",
-              "name": "subject",
-              "value": "=Your Daily Lesson & News on{{ $('Get row(s) in sheet').item.json.Topic }} ",
-              "type": "string"
-            },
-            {
-              "id": "0c818bf7-7649-4f80-aafc-7c825990fb4a",
-              "name": "body",
-              "value": "=Hi!\n\nHere’s your daily learning update on **{{ $('Get row(s) in sheet').item.json.Topic }}**:\n\n---\n**Lesson (Part {{ $json[\"Current Lesson\"] || 1 }}):**\n{{ $node[\"AI Agent\"].json[\"output\"] }}\n\nHave a great day!\n",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        800,
-        160
-      ],
-      "id": "c4612d98-941a-4322-a12b-4c7e85351f2d",
-      "name": "Edit Fields"
     },
     {
       "parameters": {
@@ -227,8 +182,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
       "position": [
-        -960,
-        40
+        -1120,
+        -20
       ],
       "id": "b5372ddf-5f69-4e82-a23f-63d2df74756b",
       "name": "Get row(s) in sheet",
@@ -241,17 +196,17 @@
     },
     {
       "parameters": {
-        "sendTo": "={{ $json.to }}",
-        "subject": "={{ $json.subject }}",
+        "sendTo": "={{ $('Get row(s) in sheet').item.json['User Email'] }}",
+        "subject": "={{ $('Get row(s) in sheet').item.json.Topic }}",
         "emailType": "text",
-        "message": "={{ $json.body }}",
+        "message": "={{ $json.output }}",
         "options": {}
       },
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        960,
-        340
+        800,
+        280
       ],
       "id": "07da113c-c490-4966-9314-25b99390d073",
       "name": "Send a message",
@@ -262,15 +217,225 @@
           "name": "Basanta Gmail"
         }
       }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an AI educational assistant preparing a detailed learning lesson on the topic:{{ $('Get row(s) in sheet').item.json.Topic }} .\n\nPlease create a structured lesson plan covering 3 important subtopics related to this main topic.\n\nFor each subtopic:\n\n1. Give a short sentence summarizing what will be studied.\n2. Provide a detailed explanation including a real-world example to help understand the concept.\n3. Provide a simple, beginner-friendly code snippet that demonstrates the concept.\n\nAfter covering all subtopics, provide 3 helpful resource links (such as tutorials, articles, GitHub repositories) that the learner can explore to deepen their knowledge.\n\nFormat your response clearly like this:\n\n---\n\nSubtopic 1: [Title]\n\nSummary: [One sentence about what this is]\n\nExplanation: [Detailed explanation with a real-world example]\n\nCode Example:\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -380,
+        220
+      ],
+      "id": "30348b25-a444-452f-bea2-6f208b5d3acc",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        440
+      ],
+      "id": "78754555-6a83-41a4-be8f-c2c80a7856cf",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tqjrIy7mRF3ocSjD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=Create a short beginner-friendly lesson for the topic \"{{ $json[\"Topic\"] }}\". This is lesson {{ $json[\"Current Lesson\"] || 1 }}."
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -200,
+        440
+      ],
+      "id": "7c415c5d-b817-4c1b-896a-611b85d49d70",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        300,
+        280
+      ],
+      "id": "2996813b-6c28-406b-a7e3-7bc58119f3c3",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "12ng76wm9qK8BzjYWQ5v6TNpYk6DkDZglORvKQxIdPEk",
+          "mode": "list",
+          "cachedResultName": "personalized-news-subscribers",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12ng76wm9qK8BzjYWQ5v6TNpYk6DkDZglORvKQxIdPEk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 10103522,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12ng76wm9qK8BzjYWQ5v6TNpYk6DkDZglORvKQxIdPEk/edit#gid=10103522"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "update": "={{ $json.update }}"
+          },
+          "matchingColumns": [
+            "update"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "User Email",
+              "displayName": "User Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Start Date",
+              "displayName": "Start Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Preferred Time",
+              "displayName": "Preferred Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Current Lesson",
+              "displayName": "Current Lesson",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Progress (Type Completed or leave blank)",
+              "displayName": "Progress (Type Completed or leave blank)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "update",
+              "displayName": "update",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1000,
+        -60
+      ],
+      "id": "7466dde5-e981-4f4a-8824-ba6c40d1ae5e",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4BbkGtOnghWR8Fam",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the first item from previous node\nconst item = $items(\"Get row(s) in sheet\")[0];\n\n// Read current update count (make sure it's a number)\nconst currentUpdate = parseInt(item.json.update || \"0\");\n\n// Add 1 to update\nconst newUpdate = currentUpdate + 1;\n\n// Return new value in the right format\nreturn [\n  {\n    json: {\n      update: newUpdate\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1020,
+        280
+      ],
+      "id": "28aad2f6-21d1-4025-97a6-1b5e168e993d",
+      "name": "Code"
     }
   ],
-  "pinData": {},
   "connections": {
     "HTTP Request": {
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "AI Agent1",
             "type": "main",
             "index": 0
           }
@@ -282,6 +447,17 @@
         [
           {
             "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
             "type": "main",
             "index": 0
           }
@@ -305,17 +481,6 @@
           {
             "node": "AI Agent",
             "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "AI Agent": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields",
-            "type": "main",
             "index": 0
           }
         ]
@@ -350,11 +515,6 @@
             "node": "HTTP Request",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "AI Agent",
-            "type": "main",
-            "index": 0
           }
         ],
         [
@@ -377,17 +537,6 @@
         ]
       ]
     },
-    "Edit Fields": {
-      "main": [
-        [
-          {
-            "node": "Send a message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Get row(s) in sheet": {
       "main": [
         [
@@ -403,18 +552,72 @@
           }
         ]
       ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        []
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": true,
-  "settings": {
-    "executionOrder": "v1"
-  },
-  "versionId": "ca991040-2395-4648-82cc-8c32c7928436",
+  "pinData": {},
   "meta": {
     "templateId": "self-building-ai-agent",
     "templateCredsSetupCompleted": true,
     "instanceId": "a4751751ac8d8629beb4599f66c544c013d764e70aca160f224959859b48ca93"
-  },
-  "id": "Lk4EaYEuOPN2zSSk",
-  "tags": []
+  }
 }
