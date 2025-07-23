@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "url": "https://newsapi.org/v2/top-headlines?category=technology&apiKey=b6195f5bb1d24428bfce066043642640",
+        "url": "https://newsapi.org/v2/top-headlines?category=technology&apiKey=",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
